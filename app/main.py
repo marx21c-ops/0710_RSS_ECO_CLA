@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.config import get_settings
-from app.db import Base, SessionLocal, engine
+from app.db import Base, SessionLocal, engine, ensure_runtime_schema
 from app.routers import api, pages
 from app.scheduler import run_collection_job, start_scheduler, stop_scheduler
 from app.services.collector import ensure_sources
@@ -15,6 +15,7 @@ from app.services.collector import ensure_sources
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    ensure_runtime_schema()
     db = SessionLocal()
     try:
         ensure_sources(db)

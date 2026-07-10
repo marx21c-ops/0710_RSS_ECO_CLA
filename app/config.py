@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     fetch_interval_hours: int = 3
     scheduler_enabled: bool = True
     fetch_on_startup: bool = False
+    translation_enabled: bool = True
+    translation_backfill_limit: int = 80
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

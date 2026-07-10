@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.db import get_db
 from app.models import Article, Source
 from app.services.collector import fetch_all_sources
+from app.services.translation import translate_missing_articles
 
 
 router = APIRouter(prefix="/api")
@@ -32,9 +33,11 @@ def list_articles(
     return [
         {
             "id": article.id,
-            "title": article.title,
+            "title": article.title_ko or article.title,
+            "original_title": article.title,
             "url": article.url,
-            "summary": article.summary,
+            "summary": article.summary_ko or article.summary,
+            "original_summary": article.summary,
             "published_at": article.published_at,
             "fetched_at": article.fetched_at,
             "source": article.source.name,
@@ -53,3 +56,19 @@ def fetch_now(db: Session = Depends(get_db)) -> dict[str, object]:
 @router.get("/fetch-now")
 def fetch_now_from_cron(db: Session = Depends(get_db)) -> dict[str, object]:
     return {"inserted": fetch_all_sources(db)}
+
+
+@router.post("/translate-now")
+def translate_now(
+    limit: int | None = Query(default=None, ge=1, le=300),
+    db: Session = Depends(get_db),
+) -> dict[str, int]:
+    return {"translated": translate_missing_articles(db, limit)}
+
+
+@router.get("/translate-now")
+def translate_now_from_browser(
+    limit: int | None = Query(default=None, ge=1, le=300),
+    db: Session = Depends(get_db),
+) -> dict[str, int]:
+    return {"translated": translate_missing_articles(db, limit)}

@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models import Article, Source
+from app.services.translation import translated_article_fields
 from app.sources import SOURCE_DEFINITIONS
 
 
@@ -60,11 +61,16 @@ def fetch_rss_source(db: Session, source: Source) -> int:
         title = entry.get("title")
         if not url or not title:
             continue
+        clean_title = _clean_text(title)
+        clean_summary = _clean_text(entry.get("summary", ""))[:1200] or None
+        title_ko, summary_ko = translated_article_fields(source.slug, clean_title, clean_summary)
         article = Article(
             source_id=source.id,
-            title=_clean_text(title),
+            title=clean_title,
+            title_ko=title_ko,
             url=url,
-            summary=_clean_text(entry.get("summary", ""))[:1200] or None,
+            summary=clean_summary,
+            summary_ko=summary_ko,
             author=entry.get("author"),
             published_at=_entry_datetime(entry),
             fetched_at=datetime.now(timezone.utc),
@@ -105,11 +111,14 @@ def fetch_html_source(db: Session, source: Source) -> int:
         if url in seen:
             continue
         seen.add(url)
+        title_ko, _ = translated_article_fields(source.slug, title, None)
         article = Article(
             source_id=source.id,
             title=title,
+            title_ko=title_ko,
             url=url,
             summary=None,
+            summary_ko=None,
             published_at=None,
             fetched_at=datetime.now(timezone.utc),
             unique_hash=_unique_hash(source.slug, url),
