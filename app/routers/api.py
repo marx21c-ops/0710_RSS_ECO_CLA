@@ -43,3 +43,8 @@ def list_articles(
 @router.post("/fetch-now")
 def fetch_now(db: Session = Depends(get_db)) -> dict[str, object]:
     return {"inserted": fetch_all_sources(db)}
+
+
+@router.get("/fetch-now")
+def fetch_now_from_cron(db: Session = Depends(get_db)) -> dict[str, object]:
+    return {"inserted": fetch_all_sources(db)}

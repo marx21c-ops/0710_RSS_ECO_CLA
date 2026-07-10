@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -20,7 +21,7 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
 
-    if settings.scheduler_enabled:
+    if settings.scheduler_enabled and not os.getenv("VERCEL"):
         start_scheduler()
         try:
             run_collection_job()
