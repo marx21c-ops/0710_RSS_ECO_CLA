@@ -12,16 +12,17 @@
         최신 경제 업데이트
       {% endif %}
     </h1>
+    <p class="content-subtitle">{{ articles|length }}개 항목을 최신순으로 보여줍니다.</p>
   </div>
   <div class="status-pill">3시간 주기 수집</div>
 </div>
 
 {% if articles %}
-  <div class="article-list">
+  <div class="article-grid">
     {% for article in articles %}
-      <article class="article-item">
+      <article class="article-card">
         <div class="article-meta">
-          <span>{{ article.source.name }}</span>
+          <span class="source-badge">{{ article.source.name }}</span>
           <time>
             {% if article.published_at %}
               {{ article.published_at.strftime("%Y-%m-%d %H:%M") }}
@@ -31,9 +32,16 @@
           </time>
         </div>
         <h2><a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">{{ article.title }}</a></h2>
-        {% if article.summary %}
-          <p>{{ article.summary }}</p>
-        {% endif %}
+        <p class="article-summary">
+          {% if article.summary %}
+            {{ article.summary }}
+          {% else %}
+            요약이 제공되지 않았습니다. 제목을 눌러 원문에서 자세한 내용을 확인할 수 있습니다.
+          {% endif %}
+        </p>
+        <div class="article-actions">
+          <a class="article-link" href="{{ article.url }}" target="_blank" rel="noopener noreferrer">원문 보기</a>
+        </div>
       </article>
     {% endfor %}
   </div>
