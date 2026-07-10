@@ -10,6 +10,11 @@ from app.services.collector import fetch_all_sources
 router = APIRouter(prefix="/api")
 
 
+@router.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @router.get("/articles")
 def list_articles(
     section: str | None = Query(default=None),

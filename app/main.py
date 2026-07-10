@@ -23,10 +23,11 @@ async def lifespan(app: FastAPI):
 
     if settings.scheduler_enabled and not os.getenv("VERCEL"):
         start_scheduler()
-        try:
-            run_collection_job()
-        except Exception:
-            pass
+        if settings.fetch_on_startup:
+            try:
+                run_collection_job()
+            except Exception:
+                pass
 
     yield
     stop_scheduler()

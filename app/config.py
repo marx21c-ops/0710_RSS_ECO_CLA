@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     database_url: str = default_database_url()
     fetch_interval_hours: int = 3
     scheduler_enabled: bool = True
+    fetch_on_startup: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
