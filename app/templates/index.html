@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <aside class="sidebar">
+    <div class="sidebar-heading">카테고리</div>
+    <a
+      class="side-link {% if not source_slug %}active{% endif %}"
+      href="{% if section == 'global' %}/global{% elif section == 'domestic' %}/domestic{% else %}/{% endif %}"
+      hx-get="{% if section == 'global' %}/global{% elif section == 'domestic' %}/domestic{% else %}/{% endif %}"
+      hx-target="#article-panel"
+      hx-push-url="true"
+    >
+      전체
+      <span>{{ articles|length }}</span>
+    </a>
+    {% for source in visible_sources %}
+      <a
+        class="side-link {% if source_slug == source.slug %}active{% endif %}"
+        href="/{{ source.section }}/{{ source.slug }}"
+        hx-get="/{{ source.section }}/{{ source.slug }}"
+        hx-target="#article-panel"
+        hx-push-url="true"
+      >
+        {{ source.name }}
+        <span>{{ counts.get(source.slug, 0) }}</span>
+      </a>
+    {% endfor %}
+  </aside>
+
+  <section id="article-panel" class="content-panel">
+    {% include "partials/articles.html" %}
+  </section>
+{% endblock %}

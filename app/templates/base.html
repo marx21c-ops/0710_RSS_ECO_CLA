@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>경제 RSS 모니터</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">경제 RSS 모니터</a>
+      <nav class="topnav" aria-label="상단 메뉴">
+        {% for item in top_nav %}
+          <a
+            class="topnav-link {% if section == item.section %}active{% endif %}"
+            href="{{ item.href }}"
+          >{{ item.label }}</a>
+        {% endfor %}
+      </nav>
+    </header>
+
+    <main class="layout">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

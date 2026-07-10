@@ -1,0 +1,45 @@
+<div class="content-head">
+  <div>
+    <p class="eyebrow">
+      {% if section == "domestic" %}국내 경제{% elif section == "global" %}해외 경제{% else %}경제 전체{% endif %}
+    </p>
+    <h1>
+      {% if source_slug %}
+        {% for source in sources %}
+          {% if source.slug == source_slug %}{{ source.name }}{% endif %}
+        {% endfor %}
+      {% else %}
+        최신 경제 업데이트
+      {% endif %}
+    </h1>
+  </div>
+  <div class="status-pill">3시간 주기 수집</div>
+</div>
+
+{% if articles %}
+  <div class="article-list">
+    {% for article in articles %}
+      <article class="article-item">
+        <div class="article-meta">
+          <span>{{ article.source.name }}</span>
+          <time>
+            {% if article.published_at %}
+              {{ article.published_at.strftime("%Y-%m-%d %H:%M") }}
+            {% else %}
+              수집 {{ article.fetched_at.strftime("%Y-%m-%d %H:%M") }}
+            {% endif %}
+          </time>
+        </div>
+        <h2><a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">{{ article.title }}</a></h2>
+        {% if article.summary %}
+          <p>{{ article.summary }}</p>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <h2>아직 수집된 항목이 없습니다.</h2>
+    <p>서버 시작 후 자동 수집이 실행됩니다. 네트워크 상태에 따라 첫 데이터가 나타나기까지 시간이 걸릴 수 있습니다.</p>
+  </div>
+{% endif %}
