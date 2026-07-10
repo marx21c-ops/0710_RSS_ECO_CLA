@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.db import get_db
 from app.models import Article, Source
 from app.services.collector import fetch_all_sources
-from app.services.translation import translate_missing_articles
+from app.services.translation import normalize_korean_terms, translate_missing_articles
 
 
 router = APIRouter(prefix="/api")
@@ -33,10 +33,10 @@ def list_articles(
     return [
         {
             "id": article.id,
-            "title": article.title_ko or article.title,
+            "title": normalize_korean_terms(article.title_ko or article.title),
             "original_title": article.title,
             "url": article.url,
-            "summary": article.summary_ko or article.summary,
+            "summary": normalize_korean_terms(article.summary_ko or article.summary),
             "original_summary": article.summary,
             "published_at": article.published_at,
             "fetched_at": article.fetched_at,

@@ -10,6 +10,7 @@ from app.db import Base, SessionLocal, engine, ensure_runtime_schema
 from app.routers import api, pages
 from app.scheduler import run_collection_job, start_scheduler, stop_scheduler
 from app.services.collector import ensure_sources
+from app.services.translation import normalize_korean_terms
 
 
 @asynccontextmanager
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
 app.state.templates = Jinja2Templates(directory="app/templates")
+app.state.templates.env.filters["ko_terms"] = normalize_korean_terms
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(pages.router)
 app.include_router(api.router)

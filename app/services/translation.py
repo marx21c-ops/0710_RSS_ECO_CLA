@@ -15,6 +15,13 @@ except ImportError:  # pragma: no cover - optional runtime dependency
 
 KOREAN_RE = re.compile(r"[가-힣]")
 GLOBAL_SOURCE_PREFIX = "fed-"
+TERM_REPLACEMENTS = (
+    ("체중 표", "가중치 표"),
+    ("체중표", "가중치 표"),
+    ("외환 환율", "환율"),
+    ("연방준비제도이사회(FRB)", "연방준비제도이사회"),
+    ("연방준비제도이사회(Federal Reserve Board)", "연방준비제도이사회"),
+)
 
 
 def should_translate(source_slug: str, text: str | None) -> bool:
@@ -56,7 +63,16 @@ def translate_to_korean(source_slug: str, text: str | None) -> str | None:
     translated = " ".join((translated or "").split())
     if not translated or translated == normalized:
         return None
-    return translated
+    return normalize_korean_terms(translated)
+
+
+def normalize_korean_terms(text: str | None) -> str | None:
+    if not text:
+        return text
+    normalized = text
+    for source, target in TERM_REPLACEMENTS:
+        normalized = normalized.replace(source, target)
+    return normalized
 
 
 def translate_missing_articles(db: Session, limit: int | None = None) -> int:
